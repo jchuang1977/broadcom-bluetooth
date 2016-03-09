@@ -16,16 +16,29 @@
 #*
 #******************************************************************************
 
-LDLIBS = -lbluetooth
+CROSS_COMPILE:=
+
+LIBS = -lbluetooth
 # CFLAGS=-g
 
 CFLAGS=
 
+CC := $(CROSS_COMPILE)gcc
+LD := $(CROSS_COMPILE)ld
+NM := $(CROSS_COMPILE)nm
+OBJCOPY := $(CROSS_COMPILE)objcopy
+STRIP := $(CROSS_COMPILE)strip
+
 all : brcm_patchram_plus brcm_patchram_plus_h5 brcm_patchram_plus_usb
 
 brcm_patchram_plus_h5 : brcm_patchram_plus_h5.o
-
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+	
 brcm_patchram_plus : brcm_patchram_plus.o
-
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
+	
 brcm_patchram_plus_usb : brcm_patchram_plus_usb.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(LIBS)
 
+%.o: %.c
+	$(CC) $(CFLAGS) -c -o $@ $^
