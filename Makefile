@@ -16,12 +16,12 @@
 #*
 #******************************************************************************
 
-CROSS_COMPILE:=
+CROSS_COMPILE:=/opt/freescale/usr/local/gcc-4.6.2-glibc-2.13-linaro-multilib-2011.12/fsl-linaro-toolchain/bin/arm-fsl-linux-gnueabi-
 
-LIBS = -lbluetooth
+LIBS = -L/home/ubuntu/CWM07/ltib/rootfs/usr/lib -lbluetooth
 # CFLAGS=-g
 
-CFLAGS=
+CFLAGS= -I/home/ubuntu/CWM07/ltib/rpm/BUILD/bluez-libs-2.25/include
 
 CC := $(CROSS_COMPILE)gcc
 LD := $(CROSS_COMPILE)ld
