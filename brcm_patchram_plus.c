@@ -112,6 +112,8 @@
 
 #include <stdlib.h>
 
+//#define __WNC__
+
 #ifdef ANDROID
 #include <termios.h>
 #else
@@ -525,6 +527,34 @@ parse_cmd_line(int argc, char **argv)
 	return(0);
 }
 
+#ifdef __WNC__
+void setup_serial_port()
+{
+	struct termios newtio;
+
+	bzero(&newtio, sizeof(newtio)); /* clear struct for new port settings */
+
+	/* man termios get more info on below settings */
+	newtio.c_cflag = B115200 | CS8 | CLOCAL | CREAD;
+
+	newtio.c_cflag |= CRTSCTS;
+
+	newtio.c_iflag = 0;
+	newtio.c_oflag = 0;
+	newtio.c_lflag = 0;
+
+	// block for up till 128 characters
+	newtio.c_cc[VMIN] = 128;
+
+	// 0.5 seconds read timeout
+	newtio.c_cc[VTIME] = 5;
+
+	/* now clean the modem line and activate the settings for the port */
+	tcflush(uart_fd, TCIOFLUSH);
+	tcsetattr(uart_fd,TCSANOW,&newtio);
+}
+#endif
+
 void
 init_uart()
 {
@@ -808,8 +838,11 @@ main (int argc, char **argv)
 		exit(2);
 	}
 
+#ifdef __WNC__
+	setup_serial_port();
+#else	
 	init_uart();
-
+#endif
 	proc_reset();
 
 	if (use_baudrate_for_download) {
